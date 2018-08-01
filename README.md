@@ -13,3 +13,7 @@ To set up locally:
     * `npm i -g ngrok`
     * `ngrok http 8282` (the port your server is running on locally
 * Put the ngrok https url as the base url for the slack app requests on the app's configuration panel.
+
+## For help creating Slack apps
+I've started a blog entry on writing Slack apps. For now it isn't polished, but it has some good notes to help out.
+[Find the blog post here](https://coursework.vschool.io/p/4d1397a2-6641-4c43-8174-0af2b2e90269/)
