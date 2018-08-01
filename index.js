@@ -3,7 +3,7 @@ const app = express()
 require("dotenv").config()
 const bodyParser = require("body-parser")
 const morgan = require("morgan")
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8282
 const { WebClient } = require('@slack/client')
 const web = new WebClient(process.env.BOT_USER_OAUTH_TOKEN)
 const { createMessageAdapter } = require('@slack/interactive-messages')
