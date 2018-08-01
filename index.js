@@ -27,26 +27,30 @@ app.use(bodyParser.urlencoded({ extended: false }))
 slackInteractions.action("vschool_assignment_submission", (payload, respond) => {
     console.log(payload)
     const newSubmission = payload.submission
-    newSubmission.studentSlackId = payload.user.id
-    newSubmission.channelId = payload.channel.id
+    newSubmission.student = {
+        slackId: payload.user.id
+    }
+    newSubmission.channel = {
+        slackId: payload.channel.id
+    }
     web.users.info({user: payload.user.id})
         .then(response => {
-            newSubmission.studentName = response.user.real_name
+            newSubmission.student.name = response.user.real_name
             return web.conversations.info({channel: payload.channel.id})
         })
         .then(response => {
             // console.log(response)
-            newSubmission.channelName = response.channel.name
+            newSubmission.channel.name = response.channel.name
             const submittedAssignment = new Submission(payload.submission)
             return submittedAssignment.save()
         })
         .then(() => {
             respond({ text: `Thanks for submitting the ${payload.submission.assignmentName} assignment! Be checking Github for feedback.` })
         })
-        .catch(err => respond({text: "There was an error"}))
+        .catch(err => respond({text: "There was an error:", err}))
 })
 
-app.post("/submit", (req, res) => {
+app.post("/assignment/submit", (req, res) => {
     web.dialog.open({
         trigger_id: req.body.trigger_id,
         dialog: {
@@ -70,8 +74,8 @@ app.post("/submit", (req, res) => {
     return res.end()
 })
 
-app.use("/slack/actions", slackInteractions.expressMiddleware())
-app.use("/submissions", require("./routes/submissions"))
+app.use("/assignment/slack/actions", slackInteractions.expressMiddleware())
+app.use("/assignment/submissions", require("./routes/submissions"))
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`)
