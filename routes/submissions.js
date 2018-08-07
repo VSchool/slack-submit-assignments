@@ -9,7 +9,7 @@ submissionRoutes.get("/", (req, res) => {
     })
 })
 
-submissionRoutes.post("/:id", (req, res) => {
+submissionRoutes.put("/:id", (req, res) => {
     Submission.findByIdAndUpdate(
         req.params.id,
         req.body,
