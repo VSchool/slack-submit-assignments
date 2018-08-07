@@ -39,7 +39,6 @@ slackInteractions.action("vschool_assignment_submission", (payload, respond) => 
             return web.conversations.info({channel: payload.channel.id})
         })
         .then(response => {
-            // console.log(response)
             newSubmission.channel.name = response.channel.name
             const submittedAssignment = new Submission(payload.submission)
             return submittedAssignment.save()

@@ -9,4 +9,16 @@ submissionRoutes.get("/", (req, res) => {
     })
 })
 
+submissionRoutes.post("/:id", (req, res) => {
+    Submission.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {new: true},
+        (err, updatedSubmission) => {
+            if (err) return res.status(500).send(err)
+            return res.send(updatedSubmission)
+        }
+    )
+})
+
 module.exports = submissionRoutes
