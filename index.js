@@ -12,7 +12,7 @@ const Submission = require("./models/submission")
 const mongoose = require("mongoose")
 
 mongoose.connect(
-    "mongodb://localhost:27017/assignment-submissions",
+     process.env.MONGOOSE_URI,
     { useNewUrlParser: true },
     err => {
         if (err) throw err
@@ -73,8 +73,15 @@ app.post("/assignment/submit", (req, res) => {
     return res.end()
 })
 
-app.use("/assignment/slack/actions", slackInteractions.expressMiddleware())
+//submissions
+app.use("/assignment/slack/actions", slackInteractions.expressMiddleware());
 app.use("/assignment/submissions", require("./routes/submissions"))
+
+//auth route
+app.use("/auth", require("./routes/auth"));
+
+//serve client app
+
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`)
