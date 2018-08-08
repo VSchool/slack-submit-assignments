@@ -12,7 +12,7 @@ const Submission = require("./models/submission")
 const mongoose = require("mongoose")
 
 mongoose.connect(
-     process.env.MONGOOSE_URI,
+    process.env.MONGOOSE_URI,
     { useNewUrlParser: true },
     err => {
         if (err) throw err
@@ -46,10 +46,10 @@ slackInteractions.action("vschool_assignment_submission", (payload, respond) => 
     newSubmission.channel = {
         slackId: payload.channel.id
     }
-    web.users.info({user: payload.user.id})
+    web.users.info({ user: payload.user.id })
         .then(response => {
             newSubmission.student.name = response.user.real_name
-            return web.conversations.info({channel: payload.channel.id})
+            return web.conversations.info({ channel: payload.channel.id })
         })
         .then(response => {
             newSubmission.channel.name = response.channel.name
@@ -59,7 +59,7 @@ slackInteractions.action("vschool_assignment_submission", (payload, respond) => 
         .then(() => {
             respond({ text: `Thanks for submitting the ${payload.submission.assignmentName} assignment! Be checking Github for feedback.` })
         })
-        .catch(err => respond({text: "There was an error:", err}))
+        .catch(err => respond({ text: "There was an error:", err }))
 })
 
 app.post("/assignment/submit", (req, res) => {
@@ -86,15 +86,27 @@ app.post("/assignment/submit", (req, res) => {
     return res.end()
 })
 
-//submissions
-app.use("/assignment/slack/actions", slackInteractions.expressMiddleware());
-app.use("/assignment/submissions", require("./routes/submissions"))
-
 //auth route
 app.use("/auth", require("./routes/auth"));
 
-//serve client app
+//handle errors
+if (app.get('env') === 'development') {
+    app.use((err, req, res, next) => {
+        res.statusMessage = err.message;
+        return res.status(err.status || 500).send();
+    });
+}
 
+app.use((err, req, res, next) => {
+    res.statusMessage = err.message;
+    res.status(err.status || 500);
+    res.send({
+        message: err.message,
+        error: {}
+    });
+});
+
+//serve client app
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`)

@@ -15,7 +15,17 @@ module.exports = {
         host: process.env.HOST,
         port: process.env.PORT || 3000,
         historyApiFallback: true,
-        proxy: { "/": { target: 'http://localhost:8282', secure: false }  }
+        proxy: {
+            "/": {
+                target: 'http://localhost:8282', secure: false,
+                bypass: function(req, res, proxyOptions) {
+                    if (req.headers.accept.indexOf('html') !== -1) {
+                      console.log('Skipping proxy for browser request.');
+                      return '/index.html';
+                    }
+                  }
+            }
+        }
     },
     optimization: {
         minimizer: [
