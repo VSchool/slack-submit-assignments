@@ -24,9 +24,22 @@ app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.use("/assignment/slack/actions", slackInteractions.expressMiddleware())
+app.use("/assignment/submissions", require("./routes/submissions"))
+
 slackInteractions.action("vschool_assignment_submission", (payload, respond) => {
-    console.log(payload)
     const newSubmission = payload.submission
+
+    // Validate the incoming Github URL string
+    console.log(/^https:\/\/github\.com/g.test(newSubmission.githubUrl))
+    if (/^https:\/\/github\.com/g.test(newSubmission.githubUrl) === false) {
+        return {
+            errors: [{
+                name: "githubUrl",
+                error: "Must be a valid Github Url. Please open your Github account, click into the assignment's folder, and copy the url from the address bar."
+            }]
+        }
+    }
     newSubmission.student = {
         slackId: payload.user.id
     }
@@ -73,8 +86,6 @@ app.post("/assignment/submit", (req, res) => {
     return res.end()
 })
 
-app.use("/assignment/slack/actions", slackInteractions.expressMiddleware())
-app.use("/assignment/submissions", require("./routes/submissions"))
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`)
