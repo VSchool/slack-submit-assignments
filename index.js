@@ -1,4 +1,5 @@
-const express = require("express")
+const express = require("express");
+const path = require("path");
 const app = express()
 require("dotenv").config()
 const bodyParser = require("body-parser")
@@ -24,8 +25,9 @@ app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use("/assignment/slack/actions", slackInteractions.expressMiddleware())
-app.use("/assignment/submissions", require("./routes/submissions"))
+
+app.use("/slack/actions", slackInteractions.expressMiddleware())
+app.use("/api/submissions", require("./routes/submissions"))
 
 slackInteractions.action("vschool_assignment_submission", (payload, respond) => {
     const newSubmission = payload.submission
@@ -62,7 +64,7 @@ slackInteractions.action("vschool_assignment_submission", (payload, respond) => 
         .catch(err => respond({ text: "There was an error:", err }))
 })
 
-app.post("/assignment/submit", (req, res) => {
+app.post("/submit", (req, res) => {
     web.dialog.open({
         trigger_id: req.body.trigger_id,
         dialog: {
@@ -89,6 +91,12 @@ app.post("/assignment/submit", (req, res) => {
 //auth route
 app.use("/auth", require("./routes/auth"));
 
+//serve client
+app.use("/admin", express.static(path.join(__dirname, "client", "dist")));
+app.get("/admin/*",(req, res) => {
+    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
 //handle errors
 if (app.get('env') === 'development') {
     app.use((err, req, res, next) => {
@@ -106,7 +114,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-//serve client app
+
 
 app.listen(PORT, () => {
     console.log(`App is listening on port ${PORT}`)

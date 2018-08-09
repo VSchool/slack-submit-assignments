@@ -20,7 +20,7 @@ const handleErrors = response => {
 }
 
 export const getSubmissions = () => setGlobalState => (
-    fetch("/assignment/submissions", config)
+    fetch("/api/submissions", config)
         .then(handleErrors)
         .then(data => setGlobalState(prevState => ({
             submissions: {
@@ -41,7 +41,7 @@ export const getSubmissions = () => setGlobalState => (
 )
 
 export const markStatus = (id, status) => setGlobalState => {
-    fetch("/assignment/submissions/" + id, {
+    fetch("/api/submissions/" + id, {
         method: "PUT",
         body: JSON.stringify({ completed: status }),
         ...config
