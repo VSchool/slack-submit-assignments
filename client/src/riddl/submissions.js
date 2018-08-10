@@ -9,8 +9,7 @@ const submissions = {
 
 const config = {
     headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        "Content-Type": "application/json; charset=utf-8"
     },
 };
 
@@ -20,7 +19,13 @@ const handleErrors = response => {
 }
 
 export const getSubmissions = () => setGlobalState => (
-    fetch("/api/submissions", config)
+    fetch("/api/submissions", {
+        ...config,
+        headers: {
+            ...config.headers,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+    })
         .then(handleErrors)
         .then(data => setGlobalState(prevState => ({
             submissions: {
@@ -44,7 +49,11 @@ export const markStatus = (id, status) => setGlobalState => {
     fetch("/api/submissions/" + id, {
         method: "PUT",
         body: JSON.stringify({ completed: status }),
-        ...config
+        ...config,
+        headers: {
+            ...config.headers,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
     })
         .then(handleErrors)
         .then(data => setGlobalState(prevState => ({

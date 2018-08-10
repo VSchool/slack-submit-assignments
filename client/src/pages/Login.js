@@ -17,6 +17,7 @@ import { connect } from "riddl-js";
 
 //transmitters
 import { login } from "../riddl/auth";
+import { getSubmissions } from "../riddl/submissions";
 
 const Div = styled.div`
     height: 100%;
@@ -25,7 +26,7 @@ const Div = styled.div`
     align-items: center; 
 `;
 
-function Login({ children, match, location, history, err, login, ...props }) {
+function Login({ children, match, location, history, err, login, getSubmissions, ...props }) {
     return (
         <Div {...props}>
             <Panel>
@@ -35,7 +36,7 @@ function Login({ children, match, location, history, err, login, ...props }) {
                 <FormContainer
                     reset
                     inputs={{ username: "", password: "" }}
-                    submit={({ inputs }) => login(inputs).then(() => history.push("/home"))}
+                    submit={({ inputs }) => login(inputs).then(getSubmissions).then(() => history.push("/home"))}
                     render={({ inputs, handleChange, handleSubmit }) => (
                         <FormDisplay onSubmit={handleSubmit}>
                             <Label htmlFor="username" >
@@ -64,4 +65,4 @@ function Login({ children, match, location, history, err, login, ...props }) {
     )
 }
 
-export default connect(Login, state => state.auth, { login });
+export default connect(Login, state => state.auth, { login, getSubmissions });

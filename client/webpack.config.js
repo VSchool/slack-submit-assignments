@@ -3,6 +3,7 @@ const path = require("path");
 
 //PLUGINS
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -11,6 +12,9 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const devMode = process.env.NODE_ENV !== "production";
 
 module.exports = {
+    output: {
+        publicPath: '/'
+    },
     devServer: {
         host: process.env.HOST,
         port: process.env.PORT || 3000,
@@ -18,12 +22,12 @@ module.exports = {
         proxy: {
             "/": {
                 target: 'http://localhost:8282', secure: false,
-                bypass: function(req, res, proxyOptions) {
+                bypass: function (req, res, proxyOptions) {
                     if (req.headers.accept.indexOf('html') !== -1) {
-                      console.log('Skipping proxy for browser request.');
-                      return '/index.html';
+                        console.log('Skipping proxy for browser request.');
+                        return '/index.html';
                     }
-                  }
+                }
             }
         }
     },
@@ -80,7 +84,19 @@ module.exports = {
                 }]
             },
             {
+                test: /\.ico$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: "file-loader",
+                    options: {
+                        name: "[name].[ext]",
+                        outputPath: '/'
+                    }
+                }]
+            },
+            {
                 test: /\.(ttf|eot|woff|woff2)$/,
+                exclude: /node_modules/,
                 use: {
                     loader: "file-loader",
                     options: {
@@ -91,9 +107,10 @@ module.exports = {
         ]
     },
     plugins: [
+        new CleanWebpackPlugin(["dist"]),
         new HtmlWebPackPlugin({
             template: "./public/index.html",
-            filename: "./index.html"
+            filename: "./index.html",
         }),
         new MiniCssExtractPlugin({ filename: 'bundle.css' }),
     ]
