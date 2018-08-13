@@ -21,7 +21,7 @@ authRoutes.route("/login")
             user.auth(req.body.password, isMatch => {
                 if (!isMatch) return next(new AuthError("Invalid password"));
                 const token = jwt.sign({ id: user._id }, process.env.SECRET);
-                return res.status(200).send({ user: user.rmPwd(), token })
+                return res.status(200).send({ user: user.removePassword(), token })
             });
         });
     });
@@ -32,7 +32,7 @@ authRoutes.route("/authenticate")
         User.findById(req.user.id, (err, user) => {
             if (err) next(err);
             if (!user) return next(new AuthError("No user found"));
-            res.status(200).send({ user: user.rmPwd() });
+            res.status(200).send({ user: user.removePassword() });
         });
     });
 

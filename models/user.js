@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.methods.rmPwd = function(){
+userSchema.methods.removePassword = function(){
     const user = this.toObject();
     delete user.password;
     return user;
