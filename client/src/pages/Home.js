@@ -4,7 +4,7 @@ import styled, { colors, media } from "../styles";
 //components
 import Nav from "../organisms/Nav";
 import H1 from "../atoms/H1";
-import H3 from "../atoms/h3";
+import H3 from "../atoms/H3";
 import P, { DisguisedLink } from "../atoms/P";
 import DataMenu from "../organisms/DataMenu";
 import Clipboard from "../containers/Clipboard";
