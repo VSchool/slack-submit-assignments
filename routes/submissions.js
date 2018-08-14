@@ -24,4 +24,11 @@ submissionRoutes.put("/:id", (req, res) => {
     )
 })
 
+submissionRoutes.delete("/:id", (req, res) => {
+    Submission.findByIdAndRemove(req.params.id, (err, removed) => {
+        if (err) return res.status(500).send(err)
+        return res.send({message: "deleted", success: true})
+    })
+})
+
 module.exports = submissionRoutes
